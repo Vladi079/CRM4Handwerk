@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/features/auth/use-auth'
 import { generateAuftragsnummer } from '@/domain/auftragsnummer'
+import type { Status } from '@/domain/status'
+import { buildStatusUpdate } from './apply-status-change'
 import {
   toAuftragPayload,
   type Auftrag,
@@ -109,6 +111,57 @@ export function useUpdateAuftrag(id: string) {
     onSuccess: (auftrag) => {
       void queryClient.invalidateQueries({ queryKey: auftraegeKeys.list() })
       queryClient.setQueryData(auftraegeKeys.detail(id), auftrag)
+    },
+  })
+}
+
+/**
+ * Change a job's status, with an optimistic update and rollback on error.
+ * The state machine is applied in buildStatusUpdate, so an illegal move is
+ * rejected before it ever reaches the database.
+ */
+export function useChangeAuftragStatus() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      auftrag,
+      to,
+    }: {
+      auftrag: Auftrag
+      to: Status
+    }): Promise<Auftrag> => {
+      const update = buildStatusUpdate(auftrag, to, todayIso())
+      if (!update) throw new Error('Ungültiger Statuswechsel.')
+      const { data, error } = await supabase
+        .from('auftraege')
+        .update(update)
+        .eq('id', auftrag.id)
+        .select()
+        .single()
+      if (error) throw error
+      return data
+    },
+    onMutate: async ({ auftrag, to }) => {
+      await queryClient.cancelQueries({ queryKey: auftraegeKeys.list() })
+      const previous = queryClient.getQueryData<Auftrag[]>(auftraegeKeys.list())
+      const update = buildStatusUpdate(auftrag, to, todayIso())
+      if (update) {
+        queryClient.setQueryData<Auftrag[]>(auftraegeKeys.list(), (old) =>
+          (old ?? []).map((item) =>
+            item.id === auftrag.id ? { ...item, ...update } : item,
+          ),
+        )
+      }
+      return { previous }
+    },
+    onError: (_error, _variables, context) => {
+      // Roll back to the snapshot taken before the optimistic update.
+      if (context?.previous) {
+        queryClient.setQueryData(auftraegeKeys.list(), context.previous)
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: auftraegeKeys.list() })
     },
   })
 }

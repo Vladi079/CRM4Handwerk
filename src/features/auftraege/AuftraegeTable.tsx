@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { MoreHorizontal, Plus } from 'lucide-react'
+import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -17,14 +16,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { euroToCents } from '@/domain/money'
-import { kundeAnzeigename } from '@/domain/kunde'
 import { formatCurrency, formatDate } from '@/lib/formatters'
-import { useKunden } from '@/features/kunden/kunden-queries'
 import { AuftragStatusBadge } from './AuftragStatusBadge'
-import { AuftragFormDialog } from './AuftragFormDialog'
-import { DeleteAuftragDialog } from './DeleteAuftragDialog'
 import { AuftraegeFilters, type AuftraegeFilterState } from './AuftraegeFilters'
-import { useAuftraege, type Auftrag } from './auftraege-queries'
+import type { KundeOption } from './AuftragForm'
+import type { Auftrag } from './auftraege-queries'
 
 const INITIAL_FILTERS: AuftraegeFilterState = {
   status: 'alle',
@@ -33,29 +29,25 @@ const INITIAL_FILTERS: AuftraegeFilterState = {
   bis: '',
 }
 
-export function AuftraegeTablePage() {
-  const { data: auftraege, isLoading, isError } = useAuftraege()
-  const { data: kunden } = useKunden()
-  const [filters, setFilters] = useState<AuftraegeFilterState>(INITIAL_FILTERS)
-  const [formOpen, setFormOpen] = useState(false)
-  const [editing, setEditing] = useState<Auftrag | undefined>(undefined)
-  const [deleteTarget, setDeleteTarget] = useState<Auftrag | null>(null)
+interface AuftraegeTableProps {
+  auftraege: Auftrag[]
+  kundeName: (auftrag: Auftrag) => string
+  kundenOptions: KundeOption[]
+  onEdit: (auftrag: Auftrag) => void
+  onDelete: (auftrag: Auftrag) => void
+}
 
-  const kundenById = useMemo(
-    () => new Map((kunden ?? []).map((kunde) => [kunde.id, kunde])),
-    [kunden],
-  )
-  const kundenOptions = useMemo(
-    () =>
-      (kunden ?? []).map((kunde) => ({
-        value: kunde.id,
-        label: kundeAnzeigename(kunde),
-      })),
-    [kunden],
-  )
+export function AuftraegeTable({
+  auftraege,
+  kundeName,
+  kundenOptions,
+  onEdit,
+  onDelete,
+}: AuftraegeTableProps) {
+  const [filters, setFilters] = useState<AuftraegeFilterState>(INITIAL_FILTERS)
 
   const filtered = useMemo(() => {
-    return (auftraege ?? []).filter((auftrag) => {
+    return auftraege.filter((auftrag) => {
       if (filters.status !== 'alle' && auftrag.status !== filters.status)
         return false
       if (filters.kundeId !== 'alle' && auftrag.kunde_id !== filters.kundeId)
@@ -67,53 +59,15 @@ export function AuftraegeTablePage() {
     })
   }, [auftraege, filters])
 
-  const openCreate = () => {
-    setEditing(undefined)
-    setFormOpen(true)
-  }
-  const openEdit = (auftrag: Auftrag) => {
-    setEditing(auftrag)
-    setFormOpen(true)
-  }
-
-  const kundeName = (auftrag: Auftrag) => {
-    const kunde = kundenById.get(auftrag.kunde_id)
-    return kunde ? kundeAnzeigename(kunde) : '—'
-  }
-
-  const hasAuftraege = (auftraege ?? []).length > 0
-
   return (
-    <section className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Aufträge</h1>
-        <Button onClick={openCreate}>
-          <Plus className="size-4" />
-          Neuer Auftrag
-        </Button>
-      </div>
+    <div className="space-y-4">
+      <AuftraegeFilters
+        value={filters}
+        onChange={setFilters}
+        kundenOptions={kundenOptions}
+      />
 
-      {hasAuftraege && (
-        <AuftraegeFilters
-          value={filters}
-          onChange={setFilters}
-          kundenOptions={kundenOptions}
-        />
-      )}
-
-      {isLoading ? (
-        <div className="space-y-2">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Skeleton key={index} className="h-12 w-full" />
-          ))}
-        </div>
-      ) : isError ? (
-        <p role="alert" className="text-destructive text-sm">
-          Die Aufträge konnten nicht geladen werden. Läuft die Datenbank?
-        </p>
-      ) : !hasAuftraege ? (
-        <EmptyState onCreate={openCreate} />
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 ? (
         <p className="text-muted-foreground text-sm">
           Keine Aufträge für diese Filter.
         </p>
@@ -162,12 +116,12 @@ export function AuftraegeTablePage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => openEdit(auftrag)}>
+                        <DropdownMenuItem onSelect={() => onEdit(auftrag)}>
                           Bearbeiten
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
-                          onSelect={() => setDeleteTarget(auftrag)}
+                          onSelect={() => onDelete(auftrag)}
                         >
                           Löschen
                         </DropdownMenuItem>
@@ -180,31 +134,6 @@ export function AuftraegeTablePage() {
           </Table>
         </div>
       )}
-
-      <AuftragFormDialog
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        auftrag={editing}
-      />
-      <DeleteAuftragDialog
-        auftrag={deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-      />
-    </section>
-  )
-}
-
-function EmptyState({ onCreate }: { onCreate: () => void }) {
-  return (
-    <div className="rounded-lg border border-dashed p-10 text-center">
-      <h2 className="font-medium">Noch keine Aufträge</h2>
-      <p className="text-muted-foreground mt-1 text-sm">
-        Lege deinen ersten Auftrag an, um loszulegen.
-      </p>
-      <Button className="mt-4" onClick={onCreate}>
-        <Plus className="size-4" />
-        Neuer Auftrag
-      </Button>
     </div>
   )
 }
