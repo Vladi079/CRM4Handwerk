@@ -12,6 +12,9 @@ create index notizen_auftrag_id_idx on public.notizen (auftrag_id);
 
 alter table public.notizen enable row level security;
 
+-- RLS decides *which rows*; the GRANT is still needed for table access at all.
+grant select, insert, update, delete on public.notizen to authenticated;
+
 create policy "Notizen lesen (ueber Auftrag)" on public.notizen
   for select using (
     exists (

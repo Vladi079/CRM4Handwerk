@@ -4,5 +4,6 @@ playwright-report
 test-results
 node_modules
 src/components/ui
+src/types/database.generated.ts
 pnpm-lock.yaml
 package-lock.json

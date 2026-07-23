@@ -1,10 +1,14 @@
 /**
- * Typed contract for the Supabase Postgres schema.
+ * Curated typed contract for the Supabase Postgres schema.
  *
- * This mirrors what `supabase gen types typescript` produces. It is written by
- * hand for now because generating it needs a running local database (Docker).
- * Once `supabase start` works, run `npm run db:types` to regenerate this file
- * from the actual schema — keep the two in sync.
+ * Supabase's generator emits `string` for CHECK-constrained columns (typ,
+ * anrede, status) and no convenience helpers, so we maintain this file by hand
+ * to narrow those columns to unions and to export Tables<>/TablesInsert<> etc.
+ *
+ * To verify it still matches the database, run `npm run db:types` — it writes
+ * the raw generated types to `database.generated.ts` (git-ignored) for you to
+ * diff against this file. The compile-time guards in the domain tests catch any
+ * union drift automatically.
  */
 
 export type Json =

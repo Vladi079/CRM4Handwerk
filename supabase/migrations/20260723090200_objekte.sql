@@ -17,6 +17,9 @@ create index objekte_kunde_id_idx on public.objekte (kunde_id);
 
 alter table public.objekte enable row level security;
 
+-- RLS decides *which rows*; the GRANT is still needed for table access at all.
+grant select, insert, update, delete on public.objekte to authenticated;
+
 -- "May I touch this Objekt?" == "Do I own its Kunde?". The EXISTS subquery is
 -- itself run under RLS-free privileges of the policy, but only returns true when
 -- the parent kunden row belongs to the current user.

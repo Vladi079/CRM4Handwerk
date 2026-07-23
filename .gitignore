@@ -26,6 +26,9 @@ test-results
 supabase/.branches
 supabase/.temp
 
+# Raw generated types (for drift-checking only; database.ts is curated)
+src/types/database.generated.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

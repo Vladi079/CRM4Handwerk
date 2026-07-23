@@ -14,6 +14,10 @@ create table public.profiles (
 -- is denied by default; each policy below re-opens exactly one operation.
 alter table public.profiles enable row level security;
 
+-- RLS decides *which rows*; a GRANT is still needed for table access at all.
+-- Logged-in users may read and change their own profile (no delete).
+grant select, insert, update on public.profiles to authenticated;
+
 -- A user may only ever read and write their own profile row. auth.uid() returns
 -- the id of the currently authenticated user; wrapping it in a subselect lets
 -- Postgres evaluate it once per query instead of once per row.

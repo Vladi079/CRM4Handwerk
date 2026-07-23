@@ -26,6 +26,9 @@ create index kunden_owner_id_idx on public.kunden (owner_id);
 
 alter table public.kunden enable row level security;
 
+-- RLS decides *which rows*; the GRANT is still needed for table access at all.
+grant select, insert, update, delete on public.kunden to authenticated;
+
 create policy "Kunden lesen (eigene)" on public.kunden
   for select using ((select auth.uid()) = owner_id);
 

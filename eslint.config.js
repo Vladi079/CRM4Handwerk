@@ -8,7 +8,13 @@ import prettier from 'eslint-config-prettier'
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'coverage', 'playwright-report', 'test-results'],
+    ignores: [
+      'dist',
+      'coverage',
+      'playwright-report',
+      'test-results',
+      'src/types/database.generated.ts',
+    ],
   },
   // Application + test code (TypeScript, type-aware linting).
   {

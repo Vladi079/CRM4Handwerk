@@ -36,6 +36,9 @@ create index auftraege_kunde_id_idx on public.auftraege (kunde_id);
 
 alter table public.auftraege enable row level security;
 
+-- RLS decides *which rows*; the GRANT is still needed for table access at all.
+grant select, insert, update, delete on public.auftraege to authenticated;
+
 create policy "Auftraege lesen (eigene)" on public.auftraege
   for select using ((select auth.uid()) = owner_id);
 
