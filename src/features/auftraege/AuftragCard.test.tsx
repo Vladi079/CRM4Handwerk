@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { AuftragCard } from './AuftragCard'
 import type { Auftrag } from './auftraege-queries'
 
@@ -27,13 +28,15 @@ function makeAuftrag(overrides: Partial<Auftrag> = {}): Auftrag {
 function renderCard(auftrag: Auftrag) {
   const onChangeStatus = vi.fn<(auftrag: Auftrag, to: string) => void>()
   render(
-    <AuftragCard
-      auftrag={auftrag}
-      kundeName="Anna Bauer"
-      onEdit={vi.fn()}
-      onDelete={vi.fn()}
-      onChangeStatus={onChangeStatus}
-    />,
+    <MemoryRouter>
+      <AuftragCard
+        auftrag={auftrag}
+        kundeName="Anna Bauer"
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+        onChangeStatus={onChangeStatus}
+      />
+    </MemoryRouter>,
   )
   return { onChangeStatus, user: userEvent.setup() }
 }

@@ -6,6 +6,7 @@ import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { KundenListPage } from '@/features/kunden/KundenListPage'
 import { KundeDetailPage } from '@/features/kunden/KundeDetailPage'
 import { AuftraegePage } from '@/features/auftraege/AuftraegePage'
+import { AuftragDetailPage } from '@/features/auftraege/AuftragDetailPage'
 
 /**
  * Route table. Public /login sits outside the guard; everything else is nested
@@ -22,6 +23,7 @@ export function AppRoutes() {
           <Route path="/kunden" element={<KundenListPage />} />
           <Route path="/kunden/:id" element={<KundeDetailPage />} />
           <Route path="/auftraege" element={<AuftraegePage />} />
+          <Route path="/auftraege/:id" element={<AuftragDetailPage />} />
         </Route>
       </Route>
 

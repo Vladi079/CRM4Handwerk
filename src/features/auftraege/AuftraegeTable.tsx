@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -93,7 +94,14 @@ export function AuftraegeTable({
                   <TableCell className="font-mono text-xs">
                     {auftrag.auftragsnummer}
                   </TableCell>
-                  <TableCell className="font-medium">{auftrag.titel}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link
+                      to={`/auftraege/${auftrag.id}`}
+                      className="hover:underline"
+                    >
+                      {auftrag.titel}
+                    </Link>
+                  </TableCell>
                   <TableCell>{kundeName(auftrag)}</TableCell>
                   <TableCell>
                     <AuftragStatusBadge status={auftrag.status} />

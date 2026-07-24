@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -51,7 +52,13 @@ export function AuftragCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{auftrag.titel}</p>
+          <Link
+            to={`/auftraege/${auftrag.id}`}
+            draggable={false}
+            className="block truncate text-sm font-medium hover:underline"
+          >
+            {auftrag.titel}
+          </Link>
           <p className="text-muted-foreground truncate text-xs">{kundeName}</p>
         </div>
         <DropdownMenu>
