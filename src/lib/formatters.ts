@@ -26,3 +26,10 @@ export function formatDate(isoDate: string | null): string {
   if (!year || !month || !day) return ''
   return dateFormatter.format(new Date(year, month - 1, day))
 }
+
+/** Format a Date object as dd.MM.yyyy using its local calendar day. */
+export function formatDateObject(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return formatDate(`${date.getFullYear()}-${month}-${day}`)
+}

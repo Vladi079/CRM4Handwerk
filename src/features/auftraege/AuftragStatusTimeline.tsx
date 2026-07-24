@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { formatDate } from '@/lib/formatters'
+import { formatDate, formatDateObject } from '@/lib/formatters'
 import { getFaelligAm, isUeberfaellig } from '@/domain/faelligkeit'
 import type { DatumField, Status } from '@/domain/status'
 import { STATUS_DOT, STATUS_LABELS } from './auftrag-labels'
@@ -11,13 +11,6 @@ const MAIN_STEPS: { status: Status; datum: DatumField }[] = [
   { status: 'erledigt', datum: 'erledigt_datum' },
   { status: 'bezahlt', datum: 'bezahlt_datum' },
 ]
-
-/** Format a local-midnight Date as dd.MM.yyyy via the shared ISO formatter. */
-function formatDateObject(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return formatDate(`${date.getFullYear()}-${month}-${day}`)
-}
 
 export function AuftragStatusTimeline({
   auftrag,

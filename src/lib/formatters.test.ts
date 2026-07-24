@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate } from './formatters'
+import { formatCurrency, formatDate, formatDateObject } from './formatters'
 
 // Intl separates the amount and the € sign with a (narrow) non-breaking space.
 // In JS `\s` also matches those, so normalise every whitespace run to a plain
@@ -22,5 +22,11 @@ describe('formatDate', () => {
   it('returns an empty string for null or malformed input', () => {
     expect(formatDate(null)).toBe('')
     expect(formatDate('')).toBe('')
+  })
+})
+
+describe('formatDateObject', () => {
+  it('formats a Date by its local calendar day', () => {
+    expect(formatDateObject(new Date(2026, 0, 5))).toBe('05.01.2026')
   })
 })
