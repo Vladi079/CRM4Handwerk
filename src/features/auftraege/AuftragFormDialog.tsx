@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/dialog'
 import { kundeAnzeigename } from '@/domain/kunde'
 import { useKunden } from '@/features/kunden/kunden-queries'
+import { useProfile } from '@/features/einstellungen/profile-queries'
+import { profileToFormValues } from '@/features/einstellungen/einstellungen-schema'
 import { AuftragForm } from './AuftragForm'
 import {
   auftragToFormValues,
@@ -34,6 +36,7 @@ export function AuftragFormDialog({
   const formId = useId()
   const isEdit = auftrag !== undefined
   const { data: kunden } = useKunden()
+  const { data: profile } = useProfile()
   const createAuftrag = useCreateAuftrag()
   const updateAuftrag = useUpdateAuftrag(auftrag?.id ?? '')
   const mutation = isEdit ? updateAuftrag : createAuftrag
@@ -58,6 +61,17 @@ export function AuftragFormDialog({
     }
   }
 
+  // Pre-fill the VAT rate of a new job from the company's default (0 % for a
+  // Kleinunternehmer). Editing keeps the job's own stored rate.
+  const createDefaults: AuftragFormValues = {
+    ...emptyAuftragFormValues,
+    mwst_satz: profile
+      ? profile.kleinunternehmer
+        ? '0'
+        : profileToFormValues(profile).standard_mwst_satz
+      : emptyAuftragFormValues.mwst_satz,
+  }
+
   const hasKunden = kundenOptions.length > 0
 
   return (
@@ -77,10 +91,10 @@ export function AuftragFormDialog({
         {hasKunden ? (
           <>
             <AuftragForm
-              key={auftrag?.id ?? 'new'}
+              key={auftrag?.id ?? `new-${createDefaults.mwst_satz}`}
               formId={formId}
               defaultValues={
-                auftrag ? auftragToFormValues(auftrag) : emptyAuftragFormValues
+                auftrag ? auftragToFormValues(auftrag) : createDefaults
               }
               kundenOptions={kundenOptions}
               onSubmit={handleSubmit}

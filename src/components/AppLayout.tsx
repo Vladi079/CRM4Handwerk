@@ -7,6 +7,7 @@ const navItems = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/kunden', label: 'Kunden', end: false },
   { to: '/auftraege', label: 'Aufträge', end: false },
+  { to: '/einstellungen', label: 'Einstellungen', end: false },
 ]
 
 /** Shell for authenticated pages: a header with navigation, sign-out, content. */
