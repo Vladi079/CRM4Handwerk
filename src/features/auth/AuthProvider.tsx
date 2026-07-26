@@ -5,6 +5,12 @@ import { AuthContext, type AuthActionResult } from './auth-context'
 
 /** Translate the handful of Supabase auth errors we expect into German. */
 function toGermanError(error: AuthError): string {
+  // A retryable fetch error means we couldn't reach the backend at all
+  // (status 0 / network failure) — a different problem than wrong credentials.
+  if (error.name === 'AuthRetryableFetchError' || error.status === 0) {
+    return 'Keine Verbindung zur Datenbank. Läuft die lokale Supabase (npm run db:start)?'
+  }
+
   const map: Record<string, string> = {
     'Invalid login credentials': 'E-Mail oder Passwort ist falsch.',
     'User already registered': 'Diese E-Mail ist bereits registriert.',
