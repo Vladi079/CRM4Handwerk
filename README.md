@@ -8,7 +8,7 @@ digital ab: **Anfrage → Angebot → Beauftragung → Erledigung → Bezahlung*
 <!-- TODO: Screenshot einfügen, sobald vorhanden (siehe docs/README.md). -->
 <!-- ![CRM4Handwerk – Kanban-Board](docs/screenshot.png) -->
 
-> **Live-Demo:** _folgt nach dem Deployment_ <!-- TODO: Vercel-URL eintragen -->
+> **Live-Demo:** https://crm-4-handwerk.vercel.app
 
 Dies ist ein **Portfolio-Projekt**. Der Fokus liegt bewusst auf einem kleinen,
 aber fertigen und gut begründbaren Umfang: Barrierefreiheit, Typsicherheit und
