@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from './use-auth'
 import { CredentialsForm } from './CredentialsForm'
+import { DEMO_EMAIL, DEMO_PASSWORD } from './demo'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -14,9 +16,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 export function AuthPage() {
   const { user, signIn, signUp } = useAuth()
   const [registerInfo, setRegisterInfo] = useState<string | null>(null)
+  const [guestLoading, setGuestLoading] = useState(false)
+  const [guestError, setGuestError] = useState<string | null>(null)
 
   if (user) {
     return <Navigate to="/" replace />
+  }
+
+  const loginAsGuest = async () => {
+    setGuestError(null)
+    setGuestLoading(true)
+    const { error } = await signIn(DEMO_EMAIL, DEMO_PASSWORD)
+    if (error) {
+      // On success the redirect above unmounts this component.
+      setGuestError(error)
+      setGuestLoading(false)
+    }
   }
 
   return (
@@ -70,6 +85,33 @@ export function AuthPage() {
               )}
             </TabsContent>
           </Tabs>
+
+          <div className="relative my-4" aria-hidden>
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-card text-muted-foreground px-2">oder</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => void loginAsGuest()}
+            disabled={guestLoading}
+          >
+            {guestLoading ? 'Wird geladen …' : 'Als Gast testen'}
+          </Button>
+          <p className="text-muted-foreground mt-2 text-center text-xs">
+            Mit Beispieldaten – ganz ohne Registrierung.
+          </p>
+          {guestError && (
+            <p role="alert" className="text-destructive mt-2 text-sm">
+              {guestError}
+            </p>
+          )}
         </CardContent>
       </Card>
     </main>
