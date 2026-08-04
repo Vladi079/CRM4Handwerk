@@ -24,7 +24,7 @@ export function AuthPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Handwerk CRM
+            CRM4Handwerk
           </h1>
           <CardDescription>
             Melde dich an oder erstelle ein Konto, um loszulegen.

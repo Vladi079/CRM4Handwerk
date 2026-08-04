@@ -26,7 +26,7 @@ export function AppLayout() {
       <header className="border-b">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 p-4">
           <div className="flex items-center gap-6">
-            <span className="font-semibold tracking-tight">Handwerk CRM</span>
+            <span className="font-semibold tracking-tight">CRM4Handwerk</span>
             <nav
               className="flex items-center gap-1"
               aria-label="Hauptnavigation"

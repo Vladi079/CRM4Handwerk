@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test'
 test('unauthenticated visitor lands on the login page', async ({ page }) => {
   await page.goto('/')
   await expect(
-    page.getByRole('heading', { name: 'Handwerk CRM' }),
+    page.getByRole('heading', { name: 'CRM4Handwerk' }),
   ).toBeVisible()
   await expect(page.getByRole('tab', { name: 'Registrieren' })).toBeVisible()
 })

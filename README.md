@@ -1,4 +1,4 @@
-# Handwerk CRM
+# CRM4Handwerk
 
 Kunden- und Auftragsverwaltung für kleine deutsche Handwerksbetriebe
 (Elektriker, Installateure, Maler). Heute führen viele davon ihre Aufträge in
@@ -6,7 +6,7 @@ Excel-Tabellen oder auf Papier — diese Anwendung bildet den kompletten Ablauf
 digital ab: **Anfrage → Angebot → Beauftragung → Erledigung → Bezahlung**.
 
 <!-- TODO: Screenshot einfügen, sobald vorhanden (siehe docs/README.md). -->
-<!-- ![Handwerk CRM – Kanban-Board](docs/screenshot.png) -->
+<!-- ![CRM4Handwerk – Kanban-Board](docs/screenshot.png) -->
 
 > **Live-Demo:** _folgt nach dem Deployment_ <!-- TODO: Vercel-URL eintragen -->
 

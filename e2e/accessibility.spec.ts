@@ -8,7 +8,7 @@ test('login page has no detectable accessibility violations', async ({
 }) => {
   await page.goto('/')
   await expect(
-    page.getByRole('heading', { name: 'Handwerk CRM' }),
+    page.getByRole('heading', { name: 'CRM4Handwerk' }),
   ).toBeVisible()
 
   const results = await new AxeBuilder({ page })
