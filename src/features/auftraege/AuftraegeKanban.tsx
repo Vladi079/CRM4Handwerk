@@ -49,8 +49,10 @@ export function AuftraegeKanban({
     }
   }
 
+  // Phones stack the columns and scroll the page; from `sm` up the board
+  // becomes the usual side-by-side, horizontally scrollable Kanban.
   return (
-    <div className="flex gap-4 overflow-x-auto pb-2">
+    <div className="flex flex-col gap-4 pb-2 sm:flex-row sm:overflow-x-auto">
       {ALL_STATUSES.map((status) => (
         <KanbanColumn
           key={status}
@@ -89,7 +91,7 @@ function KanbanColumn({
   const [isOver, setIsOver] = useState(false)
 
   return (
-    <div className="w-72 shrink-0">
+    <div className="w-full shrink-0 sm:w-72">
       <div className="mb-2 flex items-center gap-2">
         <span
           className={cn('size-2 rounded-full', STATUS_DOT[status])}
@@ -112,7 +114,7 @@ function KanbanColumn({
           onDropCard(event.dataTransfer.getData('text/plain'), status)
         }}
         className={cn(
-          'min-h-24 space-y-2 rounded-lg border border-dashed p-2 transition-colors',
+          'min-h-12 space-y-2 rounded-lg border border-dashed p-2 transition-colors sm:min-h-24',
           isOver && 'bg-muted',
         )}
       >
